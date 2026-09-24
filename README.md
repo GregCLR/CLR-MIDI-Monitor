@@ -69,3 +69,5 @@ A public repository does not give public users write access. Changes to this rep
 ## License
 
 [PolyForm Noncommercial 1.0.0](LICENSE.md). This is **source-available, not OSI open source**. Commercial-use permission is not granted; this restriction applies to using the app as well as redistributing or modifying it. See the full license for permitted purposes and exceptions. Copyright notices are in [NOTICE](NOTICE).
+
+Only one app process runs per user, including copies launched from other folders. A second launch activates the existing app. File → New Window still opens another view of the shared capture.

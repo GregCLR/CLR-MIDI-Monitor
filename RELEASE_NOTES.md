@@ -21,3 +21,5 @@ Source-available under PolyForm Noncommercial 1.0.0. Commercial-use permission i
 ## Validation
 
 21 unit tests pass, plus isolated driver overload/memory-safety and Swift IPC tests. CoreMIDI output to Kenton has been reported working by the owner. The release-session controlled live probe did not send anything because another monitor owned the driver subscription; broad live/stage qualification and CPU benchmarks remain outstanding.
+
+Only one app process runs per user, including copies launched from other folders. A second launch activates the existing app. File → New Window still opens another view of the shared capture.

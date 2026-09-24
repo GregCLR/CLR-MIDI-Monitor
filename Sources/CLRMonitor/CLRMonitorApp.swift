@@ -15,7 +15,30 @@ private enum CLR {
 
 @main
 struct CLRMonitorApp: App {
-    @StateObject private var model = MonitorModel()
+    @StateObject private var model: MonitorModel
+    private let instanceLock: InstanceLock
+
+    init() {
+        do {
+            let folder = try FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+                .appendingPathComponent("CLR MIDI Monitor", isDirectory: true)
+            try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+            guard let lock = try InstanceLock(path: folder.appendingPathComponent("instance.lock").path) else {
+                NSRunningApplication.runningApplications(withBundleIdentifier: "com.clr.midimonitor")
+                    .first(where: { $0.processIdentifier != ProcessInfo.processInfo.processIdentifier })?
+                    .activate(options: [.activateAllWindows, .activateIgnoringOtherApps])
+                exit(0)
+            }
+            instanceLock = lock
+            _model = StateObject(wrappedValue: MonitorModel())
+        } catch {
+            let alert = NSAlert()
+            alert.messageText = "Unable to start CLR MIDI Monitor"
+            alert.informativeText = "The app could not establish its single-instance lock. No MIDI capture was started.\n\n\(error.localizedDescription)"
+            alert.runModal()
+            exit(1)
+        }
+    }
     var body: some Scene {
         WindowGroup("CLR MIDI Monitor") {
             MonitorView(model: model).preferredColorScheme(.dark)
