@@ -206,9 +206,8 @@ struct MonitorView: View {
                     Button("Clear") { model.clear() }
                 }.padding(.bottom, 10)
                 columns(width: width)
-                eventRow(visible.last, width: width)
-                    .background(CLR.amber.opacity(0.09))
-                    .overlay(alignment: .leading) { Rectangle().fill(CLR.amber).frame(width: 2) }
+                eventRow(visible.last, width: width, highlighted: true)
+                    .padding(.bottom, 6)
                 Divider().overlay(CLR.line)
                 title("HISTORY").padding(.vertical, 10)
                 ScrollView {
@@ -304,14 +303,26 @@ struct MonitorView: View {
             }
         }
     }
-    private func eventRow(_ event: MIDIEvent?, width: CGFloat) -> some View {
+    private func eventRow(_ event: MIDIEvent?, width: CGFloat, highlighted: Bool = false) -> some View {
         let display = event.map { model.formatted($0) }
         let values = [event.map { model.time($0) } ?? "—", event?.path.rawValue ?? "—", event?.endpointName ?? "—", event?.kind ?? "—", event?.channel.map(String.init) ?? "—", display?.parameter ?? "—", display?.value ?? "—"]
         let sizes = widths(width)
         return HStack(spacing: 0) {
             ForEach(0..<values.count, id: \.self) { i in
                 Text(values[i]).font(CLR.rowFont).lineLimit(1).truncationMode(.tail)
-                    .padding(.horizontal, 6).frame(width: sizes[i], height: 28, alignment: .leading).help(values[i])
+                    .padding(.horizontal, 6).frame(width: sizes[i], height: 28, alignment: .leading)
+                    .background {
+                        if highlighted {
+                            RoundedRectangle(cornerRadius: 4)
+                                .fill(CLR.amber.opacity(0.08))
+                                .overlay {
+                                    RoundedRectangle(cornerRadius: 4)
+                                        .strokeBorder(CLR.amber.opacity(0.32), lineWidth: 1)
+                                }
+                                .padding(.horizontal, 2)
+                        }
+                    }
+                    .help(values[i])
             }
         }.accessibilityElement(children: .combine)
     }
