@@ -2,7 +2,7 @@
 
 A native macOS MIDI monitor with a compact latest-event row, searchable history and a detailed inspector.
 
-**Version 1.0 · macOS 13+ · Apple Silicon**
+**Version 1.0.1 · macOS 13+ · Apple Silicon**
 
 ## Features
 
@@ -19,17 +19,17 @@ The monitor does not send, echo or route MIDI. Outputs are identified by destina
 
 ## Get started
 
-Open the app, choose Inputs under Options, and turn Monitoring on. To observe another app sending MIDI to hardware, install the bundled output monitor using the button below Receive from software, then select the destination under Outputs. No separate driver download is needed.
+Open the app, choose Inputs under Options, and turn Monitoring on. The app automatically prepares its bundled output observer before CoreMIDI starts, so there is no separate download or installation step. To observe another app sending MIDI to hardware, select the destination under Outputs.
 
 For direct reception from Ableton Live, enable Receive from software and Monitoring, enable Track for the CLR receive output in Live's MIDI settings, then select it in the track's MIDI To menu. This redirects the track to the monitor; leave the original hardware routing unchanged if you want to observe it under Outputs instead.
 
-Read the [user guide](Sources/CLRMonitor/Resources/Manual.html) for installation, routing, controls, export and troubleshooting.
+Read the [user guide](Sources/CLRMonitor/Resources/Manual.html) for routing, controls, export and troubleshooting.
 
 ## Download and trust
 
 The downloadable app is ad-hoc signed and **not Apple-notarized**. macOS may block a downloaded copy. No Developer ID certificate is included in this repository. Developers can build locally from the source below. Do not disable macOS security protections to use the app.
 
-The bundled output driver is installed only when the user clicks Install Output Monitor. Installation does not forcibly restart CoreMIDI. Use a quiet session for first installation and close MIDI-dependent apps first.
+The bundled output observer is prepared automatically before the app initializes CoreMIDI. It never forcibly restarts CoreMIDI. If CoreMIDI was already running when the observer was first prepared, restart the Mac once before testing outputs.
 
 ## Build
 

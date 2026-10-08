@@ -32,26 +32,21 @@ final class MonitorModel: ObservableObject {
     @Published var selection: UUID?
     private let driverInstaller = OutputDriverInstaller()
     @Published var driverInstalled = false
-    @Published var installingDriver = false
     @Published var driverInstallError: String?
     var outputDisplayStatus: String {
-        if outputStatus == "Driver not loaded" {
-            return driverInstalled ? "Installed · waiting for CoreMIDI" : "Output monitor not installed"
-        }
-        return outputStatus
-    }
-    func installOutputDriver() {
-        guard !installingDriver else { return }
-        installingDriver = true; driverInstallError = nil
-        let installer = driverInstaller
-        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            let result = Result { try installer.install() }
-            DispatchQueue.main.async {
-                guard let self else { return }
-                self.installingDriver = false
-                self.driverInstalled = installer.isInstalled
-                if case .failure(let error) = result { self.driverInstallError = error.localizedDescription }
-            }
+        switch outputStatus {
+        case "Driver not loaded":
+            return driverInstalled ? "Restart Mac to enable outputs" : "Outputs unavailable"
+        case "Driver available · idle":
+            return "Outputs ready"
+        case "Output monitoring active":
+            return "Output capture active"
+        case "Driver in use by another monitor":
+            return "Outputs in use by another monitor"
+        case "Driver monitoring unavailable", "Driver connection unavailable", "Driver response invalid":
+            return "Outputs unavailable"
+        default:
+            return outputStatus
         }
     }
     private let spy = OutputSpy()
@@ -68,6 +63,15 @@ final class MonitorModel: ObservableObject {
     private var lastClearTicks: UInt64 = 0
 
     init() {
+        // Prepare output observation before the first CoreMIDI call. On a clean
+        // Mac this lets CoreMIDI discover the bundled observer at normal startup.
+        do {
+            if !driverInstaller.isInstalled { try driverInstaller.install() }
+            driverInstalled = driverInstaller.isInstalled
+        } catch {
+            driverInstalled = driverInstaller.isInstalled
+            driverInstallError = error.localizedDescription
+        }
         spy.onStatus = { [weak self] in self?.outputStatus = $0 }
         spy.startPolling()
         engine.onChange = { [weak self] in self?.refresh() }

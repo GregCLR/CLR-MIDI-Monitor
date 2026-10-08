@@ -162,18 +162,8 @@ struct MonitorView: View {
                         .toggleStyle(.checkbox).help("Creates CLR MIDI Monitor — Receive while monitoring is on.")
                     Text("To check your app’s MIDI output, enable this option and Monitoring, then choose CLR MIDI Monitor — Receive as the MIDI output in your app.")
                         .font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
-                    if !model.driverInstalled {
-                        Button(model.installingDriver ? "Installing…" : "Install Output Monitor") {
-                            model.installOutputDriver()
-                        }.disabled(model.installingDriver)
-                        Text("Included with this app. Install once to see MIDI sent by other apps. Close MIDI apps before installing.")
-                            .font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
-                    } else if model.outputStatus == "Driver not loaded" {
-                        Text("Reopen your MIDI apps when convenient. If it remains unavailable, restart your Mac.")
-                            .font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
-                    }
                     if let error = model.driverInstallError {
-                        Text(error).font(.caption).foregroundStyle(.red).fixedSize(horizontal: false, vertical: true)
+                        Text("Output setup failed: \(error)").font(.caption).foregroundStyle(.red).fixedSize(horizontal: false, vertical: true)
                     }
                 }
                 Divider().overlay(CLR.line)
