@@ -2,7 +2,7 @@
 
 A native macOS MIDI monitor with a compact latest-event row, searchable history and a detailed inspector.
 
-**Version 1.0.1 · macOS 13+ · Apple Silicon**
+**Version 1.0.2 · macOS 13+ · Apple Silicon**
 
 ## Features
 
@@ -14,6 +14,7 @@ A native macOS MIDI monitor with a compact latest-event row, searchable history 
 - Hide voice, System Common, SysEx, clock and active-sensing messages.
 - Inspect original UMP words and timestamps; export retained history as JSON.
 - Open the offline guide from **Help → CLR MIDI Monitor Help**.
+- Open the Custom Live Rigs website from the CLR logo, or right-click it to copy the address.
 
 The monitor does not send, echo or route MIDI. Outputs are identified by destination, not by the sending application. Data kept entirely inside a DAW/plugin may not be visible to CoreMIDI.
 

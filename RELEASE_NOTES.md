@@ -1,8 +1,10 @@
-# CLR MIDI Monitor 1.0.1
+# CLR MIDI Monitor 1.0.2
 
 First public release of the native Apple Silicon macOS application.
 
 Includes source/destination selection with All checkboxes; automatic preparation of the bundled output observer before CoreMIDI starts; direct virtual MIDI reception; a compact latest-event row and shared history; format/category filters; Inspect with raw UMP; JSON export in the File menu; a collapsible Options sidebar; a red OFF overlay; and an offline manual in the Help menu.
+
+Version 1.0.2 also makes the CLR logo a link to the Custom Live Rigs website. Right-click the logo to copy the address; if the browser cannot be opened, the app copies the address and explains what happened.
 
 Multiple windows remain available and share one capture session. Export includes all retained events, regardless of display filters.
 

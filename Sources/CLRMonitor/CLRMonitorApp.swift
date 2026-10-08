@@ -76,6 +76,14 @@ private struct MonitoringSwitch: ToggleStyle {
 }
 
 struct MonitorView: View {
+    private static let websiteURL = URL(string: "https://www.customliverigs.com")!
+    @State private var websiteFallbackPresented = false
+
+    private func copyWebsiteAddress() {
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.setString(Self.websiteURL.absoluteString, forType: .string)
+    }
+
     @ObservedObject var model: MonitorModel
     @AppStorage("sidebarVisible") private var sidebarVisible = true
     var body: some View {
@@ -92,8 +100,27 @@ struct MonitorView: View {
                     .help(sidebarVisible ? "Hide sidebar" : "Show sidebar")
                     .frame(width: sidebarVisible ? 301 : 128, alignment: .leading)
                 HStack(spacing: 18) {
-                    Image(nsImage: CLR.resources.url(forResource: "clr-logo", withExtension: "png").flatMap { NSImage(contentsOf: $0) } ?? NSImage())
-                        .resizable().scaledToFit().frame(width: 76, height: 36).accessibilityLabel("CLR")
+                    Button {
+                        if !NSWorkspace.shared.open(Self.websiteURL) {
+                            copyWebsiteAddress()
+                            websiteFallbackPresented = true
+                        }
+                    } label: {
+                        Image(nsImage: CLR.resources.url(forResource: "clr-logo", withExtension: "png").flatMap { NSImage(contentsOf: $0) } ?? NSImage())
+                            .resizable().scaledToFit().frame(width: 76, height: 36)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Open Custom Live Rigs website")
+                    .help("Open www.customliverigs.com. Right-click to copy the address.")
+                    .contextMenu {
+                        Button("Copy website address") { copyWebsiteAddress() }
+                    }
+                    .alert("Website address copied", isPresented: $websiteFallbackPresented) {
+                        Button("OK", role: .cancel) { }
+                    } message: {
+                        Text("The browser could not be opened. Paste https://www.customliverigs.com into your browser.")
+                    }
                     Text("MIDI MONITOR").font(.system(size: 20, weight: .semibold))
                     Spacer()
                     Toggle("Monitoring", isOn: Binding(get: { model.running }, set: { if $0 != model.running { model.toggleCapture() } }))
