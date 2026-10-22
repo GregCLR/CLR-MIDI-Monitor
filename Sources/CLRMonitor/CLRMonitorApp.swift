@@ -2,7 +2,7 @@ import SwiftUI
 import AppKit
 import MIDICore
 
-private enum CLR {
+enum CLR {
     static let resources: Bundle = {
         if let url = Bundle.main.url(forResource: "CLRMIDIMonitor_CLRMonitor", withExtension: "bundle"), let bundle = Bundle(url: url) { return bundle }
         return .module
@@ -16,6 +16,7 @@ private enum CLR {
 @main
 struct CLRMonitorApp: App {
     @StateObject private var model: MonitorModel
+    @StateObject private var osc: OSCModel
     private let instanceLock: InstanceLock
 
     init() {
@@ -31,6 +32,7 @@ struct CLRMonitorApp: App {
             }
             instanceLock = lock
             _model = StateObject(wrappedValue: MonitorModel())
+            _osc = StateObject(wrappedValue: OSCModel())
         } catch {
             let alert = NSAlert()
             alert.messageText = "Unable to start CLR MIDI Monitor"
@@ -41,15 +43,11 @@ struct CLRMonitorApp: App {
     }
     var body: some Scene {
         WindowGroup("CLR MIDI Monitor") {
-            MonitorView(model: model).preferredColorScheme(.dark)
+            MonitorTabs(midi: model, osc: osc).preferredColorScheme(.dark)
         }.defaultSize(width: 1380, height: 820)
             .commands {
                 MonitorHelpCommands()
-                CommandGroup(replacing: .saveItem) {
-                    Button("Export Capture…") { model.export() }
-                        .keyboardShortcut("e", modifiers: [.command, .shift])
-                        .disabled(model.events.isEmpty)
-                }
+                CaptureExportCommands()
             }
         Window("CLR MIDI Monitor Help", id: "user-guide") {
             ManualView().frame(minWidth: 600, minHeight: 500)
@@ -57,7 +55,7 @@ struct CLRMonitorApp: App {
     }
 }
 
-private struct MonitoringSwitch: ToggleStyle {
+struct MonitoringSwitch: ToggleStyle {
     func makeBody(configuration: Configuration) -> some View {
         HStack(spacing: 10) {
             configuration.label
@@ -76,14 +74,6 @@ private struct MonitoringSwitch: ToggleStyle {
 }
 
 struct MonitorView: View {
-    private static let websiteURL = URL(string: "https://www.customliverigs.com")!
-    @State private var websiteFallbackPresented = false
-
-    private func copyWebsiteAddress() {
-        NSPasteboard.general.clearContents()
-        NSPasteboard.general.setString(Self.websiteURL.absoluteString, forType: .string)
-    }
-
     @ObservedObject var model: MonitorModel
     @AppStorage("sidebarVisible") private var sidebarVisible = true
     var body: some View {
@@ -100,27 +90,7 @@ struct MonitorView: View {
                     .help(sidebarVisible ? "Hide sidebar" : "Show sidebar")
                     .frame(width: sidebarVisible ? 301 : 128, alignment: .leading)
                 HStack(spacing: 18) {
-                    Button {
-                        if !NSWorkspace.shared.open(Self.websiteURL) {
-                            copyWebsiteAddress()
-                            websiteFallbackPresented = true
-                        }
-                    } label: {
-                        Image(nsImage: CLR.resources.url(forResource: "clr-logo", withExtension: "png").flatMap { NSImage(contentsOf: $0) } ?? NSImage())
-                            .resizable().scaledToFit().frame(width: 76, height: 36)
-                            .contentShape(Rectangle())
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityLabel("Open Custom Live Rigs website")
-                    .help("Open www.customliverigs.com. Right-click to copy the address.")
-                    .contextMenu {
-                        Button("Copy website address") { copyWebsiteAddress() }
-                    }
-                    .alert("Website address copied", isPresented: $websiteFallbackPresented) {
-                        Button("OK", role: .cancel) { }
-                    } message: {
-                        Text("The browser could not be opened. Paste https://www.customliverigs.com into your browser.")
-                    }
+                    WebsiteLogo()
                     Text("MIDI MONITOR").font(.system(size: 20, weight: .semibold))
                     Spacer()
                     Toggle("Monitoring", isOn: Binding(get: { model.running }, set: { if $0 != model.running { model.toggleCapture() } }))
@@ -365,5 +335,39 @@ struct MonitorView: View {
                     .help(values[i])
             }
         }.accessibilityElement(children: .combine)
+    }
+}
+
+struct WebsiteLogo: View {
+    private static let websiteURL = URL(string: "https://www.customliverigs.com")!
+    @State private var websiteFallbackPresented = false
+
+    private func copyWebsiteAddress() {
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.setString(Self.websiteURL.absoluteString, forType: .string)
+    }
+
+    var body: some View {
+                    Button {
+                        if !NSWorkspace.shared.open(Self.websiteURL) {
+                            copyWebsiteAddress()
+                            websiteFallbackPresented = true
+                        }
+                    } label: {
+                        Image(nsImage: CLR.resources.url(forResource: "clr-logo", withExtension: "png").flatMap { NSImage(contentsOf: $0) } ?? NSImage())
+                            .resizable().scaledToFit().frame(width: 76, height: 36)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Open Custom Live Rigs website")
+                    .help("Open www.customliverigs.com. Right-click to copy the address.")
+                    .contextMenu {
+                        Button("Copy website address") { copyWebsiteAddress() }
+                    }
+                    .alert("Website address copied", isPresented: $websiteFallbackPresented) {
+                        Button("OK", role: .cancel) { }
+                    } message: {
+                        Text("The browser could not be opened. Paste https://www.customliverigs.com into your browser.")
+                    }
     }
 }

@@ -1,27 +1,11 @@
-# CLR MIDI Monitor 1.0.2
+# CLR MIDI Monitor 1.1.0
 
-First public release of the native Apple Silicon macOS application.
+Adds a receive-only OSC tab alongside MIDI. Both captures have independent On/Off controls and history, shared across app windows. Active-tab export is available from File → Export Capture.
 
-Includes source/destination selection with All checkboxes; automatic preparation of the bundled output observer before CoreMIDI starts; direct virtual MIDI reception; a compact latest-event row and shared history; format/category filters; Inspect with raw UMP; JSON export in the File menu; a collapsible Options sidebar; a red OFF overlay; and an offline manual in the Help menu.
+OSC uses a user-selected, exclusively bound IPv4 UDP port. Default is This Mac only at 127.0.0.1:9001; Network must be selected explicitly. Occupied ports are refused. No forwarding, replies, discovery, port sharing or existing routing changes.
 
-Version 1.0.2 also makes the CLR logo a link to the Custom Live Rigs website. Right-click the logo to copy the address; if the browser cannot be opened, the app copies the address and explains what happened.
+The OSC interface uses the same CLR layout: collapsible Options sidebar, framed latest-event fields, searchable history, Inspect and red OFF overlay. Decodes messages and bounded nested bundles; shows sender, address, types, values, original bundle timetags and raw packet data. Supports JSON export including filtered events.
 
-Multiple windows remain available and share one capture session. Export includes all retained events, regardless of display filters.
+36 tests pass, including isolated UDP exclusivity, continued original-listener delivery, no-reply and bounded-queue checks. Native loopback capture/inspection/export verified. See docs/OSC-VALIDATION.md for evidence and practical limits.
 
-## Distribution notes
-
-This build is ad-hoc signed, not Apple Developer ID signed or notarized. macOS may block downloaded copies. Source and local build instructions are provided. The output observer is optional for inputs/direct reception, is bundled with the app, prepares itself automatically and never forces a MIDI-server restart.
-
-## Known limits
-
-MIDI 2.0 semantic decoding, SysEx reassembly, capture import/session reopening and Intel binaries are not included. Sender-app names are not supplied by CoreMIDI output observation; OUT rows name destinations. Retained history is limited to 10,000 events. Monitoring has finite capacity and CPU overhead.
-
-## License
-
-Source-available under PolyForm Noncommercial 1.0.0. Commercial-use permission is not granted. Public visibility does not grant write access to the original repository.
-
-## Validation
-
-21 unit tests pass, plus isolated driver overload/memory-safety and Swift IPC tests. CoreMIDI output to Kenton has been reported working by the owner. The release-session controlled live probe did not send anything because another monitor owned the driver subscription; broad live/stage qualification and CPU benchmarks remain outstanding.
-
-Only one app process runs per user, including copies launched from other folders. A second launch activates the existing app. File → New Window still opens another view of the shared capture.
+macOS 13+, Apple Silicon. Ad-hoc signed, not Apple-notarized. PolyForm Noncommercial 1.0.0. A dedicated unused port is required; this does not sniff traffic sent to other apps. No TCP/IPv6, multicast discovery, OSCQuery or forwarding. History is bounded; UDP/network losses remain possible.

@@ -1,0 +1,42 @@
+[
+  {
+    "id" : "C2B99BE8-C8B2-416D-B5BF-62E4F9F92F53",
+    "localPort" : 9001,
+    "message" : {
+      "address" : "\/test\/fader\/1",
+      "arguments" : [
+        "0.75"
+      ],
+      "isBundle" : false,
+      "timeTags" : [
+        "0000000000000001"
+      ],
+      "types" : ",f"
+    },
+    "packet" : "I2J1bmRsZQAAAAAAAAAAAQAAABgvdGVzdC9mYWRlci8xAAAALGYAAD9AAAAAAAAgL3Rlc3QvY3VlAAAALGlzVAAAAAAAAAAMUmVhZHkAAAA=",
+    "receivedAt" : "2026-10-22T16:16:59Z",
+    "sender" : "127.0.0.1",
+    "senderPort" : 54815
+  },
+  {
+    "id" : "92502C73-B33A-4633-B47C-387D1E83EE62",
+    "localPort" : 9001,
+    "message" : {
+      "address" : "\/test\/cue",
+      "arguments" : [
+        "12",
+        "\"Ready\"",
+        "true"
+      ],
+      "isBundle" : false,
+      "timeTags" : [
+        "0000000000000001"
+      ],
+      "types" : ",isT"
+    },
+    "packet" : "I2J1bmRsZQAAAAAAAAAAAQAAABgvdGVzdC9mYWRlci8xAAAALGYAAD9AAAAAAAAgL3Rlc3QvY3VlAAAALGlzVAAAAAAAAAAMUmVhZHkAAAA=",
+    "receivedAt" : "2026-10-22T16:16:59Z",
+    "sender" : "127.0.0.1",
+    "senderPort" : 54815
+  }
+]

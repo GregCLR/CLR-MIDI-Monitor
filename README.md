@@ -2,7 +2,7 @@
 
 A native macOS MIDI monitor with a compact latest-event row, searchable history and a detailed inspector.
 
-**Version 1.0.2 · macOS 13+ · Apple Silicon**
+**Version 1.1.0 · macOS 13+ · Apple Silicon**
 
 ## Features
 
@@ -72,3 +72,15 @@ A public repository does not give public users write access. Changes to this rep
 [PolyForm Noncommercial 1.0.0](LICENSE.md). This is **source-available, not OSI open source**. Commercial-use permission is not granted; this restriction applies to using the app as well as redistributing or modifying it. See the full license for permitted purposes and exceptions. Copyright notices are in [NOTICE](NOTICE).
 
 Only one app process runs per user, including copies launched from other folders. A second launch activates the existing app. File → New Window still opens another view of the shared capture.
+
+## OSC tab (1.1.0)
+
+Receive-only OSC over IPv4 UDP. Select the OSC tab, enter an unused UDP port (1024–65535), choose This Mac only or Network, then turn Monitoring on. Both protocols start off, run independently, and keep their capture when switching tabs; the top status indicators show both. File export uses the active tab in the frontmost monitor window.
+
+Default reception is 127.0.0.1:9001. For network reception, explicitly select Network and send to this Mac's IPv4 address. The receiver never enables port sharing/reuse, joins multicast, sends, replies or forwards. Occupied endpoints fail without replacing the existing listener. Use a dedicated spare port: while running, the monitor reserves that endpoint and another app cannot bind it. Stop monitoring to release it. It does not sniff another app's traffic. No routing/firewall changes are made. Network mode accepts incoming packets from reachable senders; do not expose it to untrusted networks.
+
+OSC 1.0 messages and nested bundles, core i/f/s/b and h/d/t/S/c/r/m/T/F/N/I/array tags are decoded. Bundle timetags are displayed as original hexadecimal NTP values (1 = immediate); messages are displayed on arrival, never scheduled or executed. Unknown tags/malformed packets appear as invalid packets with raw data. Maximum 16 bundle nesting levels and 256 packet elements/type tags; oversized/overcomplex input is rejected.
+
+Separate OSC latest/history/inspector, sender and address/type/value search, display filters and JSON export. Export retains original datagrams as base64 plus sender/local port/timestamps and decoded fields, including filtered-out events. Bundled messages share arrival time and repeat the parent packet in export. Arrival timestamps are local receipt times, not source timing measurements. History caps at 10,000 events and a conservative 16 MiB content budget; queue caps at 256 packets/2 MiB, drained in bounded batches. Queue drops exclude losses in the OS/network. No TCP, IPv6, multicast discovery, forwarding or OSCQuery. The MIDI capture engine and routing behavior are unchanged.
+
+Decoder reference: https://opensoundcontrol.stanford.edu/spec-1_0.html

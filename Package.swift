@@ -8,11 +8,13 @@ let package = Package(
     targets: [
         .target(name: "CaptureTransport", linkerSettings: [.linkedFramework("CoreMIDI")]),
         .target(name: "MIDICore", dependencies: ["CaptureTransport"]),
+        .target(name: "OSCCore"),
+        .testTarget(name: "OSCCoreTests", dependencies: ["OSCCore"]),
         .target(name: "MIDICapture", dependencies: ["MIDICore"]),
         .executableTarget(name: "OutputLiveProbe", dependencies: ["MIDICapture", "MIDICore"]),
         .executableTarget(name: "OutputSpyProbe", dependencies: ["MIDICapture", "MIDICore"]),
         .executableTarget(name: "MIDICaptureProbe", dependencies: ["MIDICapture", "MIDICore"]),
-        .executableTarget(name: "CLRMonitor", dependencies: ["MIDICore", "MIDICapture"], resources: [.process("Resources")]),
+        .executableTarget(name: "CLRMonitor", dependencies: ["MIDICore", "MIDICapture", "OSCCore"], resources: [.process("Resources")]),
         .testTarget(name: "DriverSetupTests", dependencies: ["MIDICapture"]),
         .testTarget(name: "MIDICoreTests", dependencies: ["MIDICore"])
     ]

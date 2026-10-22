@@ -2,7 +2,7 @@
 set -eu
 cd "$(dirname "$0")/.."
 scripts/build-driver.sh
-swift build --scratch-path work/build -c release --product CLRMonitor
+swift build --scratch-path work/build -j 2 -c release --product CLRMonitor
 app="outputs/CLR MIDI Monitor.app"
 mkdir -p "$app/Contents/MacOS" "$app/Contents/Resources"
 cp work/build/release/CLRMonitor "$app/Contents/MacOS/CLRMonitor"
@@ -20,10 +20,11 @@ cat > "$app/Contents/Info.plist" <<'PLIST'
 <key>CFBundleDisplayName</key><string>CLR MIDI Monitor</string>
 <key>CFBundleIconFile</key><string>CLRMonitorIcon</string>
 <key>CFBundlePackageType</key><string>APPL</string>
-<key>CFBundleShortVersionString</key><string>1.0.2</string>
-<key>CFBundleVersion</key><string>102</string>
+<key>CFBundleShortVersionString</key><string>1.1.0</string>
+<key>CFBundleVersion</key><string>110</string>
 <key>LSMultipleInstancesProhibited</key><true/>
 <key>LSMinimumSystemVersion</key><string>13.0</string>
+<key>NSLocalNetworkUsageDescription</key><string>Receive OSC messages sent to the UDP port you select when network monitoring is enabled.</string>
 <key>NSHighResolutionCapable</key><true/>
 </dict></plist>
 PLIST
