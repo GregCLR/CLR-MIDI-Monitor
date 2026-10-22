@@ -1,0 +1,43 @@
+# CLR MIDI Monitor — Quick Guide
+
+Version 1.1.0 · macOS 13 or later · Apple Silicon
+
+## Monitor MIDI
+1. Open CLR MIDI Monitor and click Options to show the sidebar.
+2. Select the MIDI inputs you want to inspect. All selects or clears the listed ports; Refresh updates the list.
+3. Switch Monitoring on. Play a controller or start MIDI playback.
+4. Read the latest event above History. Click a history row to see its details in Inspect.
+
+## Observe an app sending MIDI to hardware
+Select the hardware destination under Outputs, then turn Monitoring on. Keep the sending app’s normal routing. OUT identifies the destination port, not the sending app. The bundled output observer is prepared automatically. If its status requests a restart, restart the Mac once; the monitor does not force a CoreMIDI restart.
+
+## Receive directly from software
+Enable Receive from software and Monitoring. In your music app, choose CLR MIDI Monitor — Receive as the MIDI output. In Ableton Live, enable Track for this output in MIDI settings and select it in the MIDI track’s MIDI To menu. Sending directly to the monitor replaces that track’s hardware destination; use Outputs observation when you want to keep the hardware routing.
+
+## Monitor OSC
+1. Select the OSC tab. Open Options and enter an unused UDP port (1024–65535; default 9001).
+2. Choose This Mac only for local apps. Send OSC to 127.0.0.1 and that port. Choose Network (IPv4) only when receiving from another device, and send to this Mac’s IPv4 address and that port.
+3. Turn Monitoring on. Read the sender, address, type tags and arguments in the latest row and history. Click an event for bundle timetags and raw packet bytes.
+4. Filter by sender or search address/type/value. Invalid packets stay visible unless hidden.
+5. Turn Monitoring off to release the port. Export before quitting.
+
+Use a dedicated spare port. An occupied port is refused; the monitor does not take over another app’s endpoint. While listening it reserves its selected endpoint, so another app cannot bind it. No OSC replies, forwarding, port sharing, multicast joins or routing changes are performed. It does not sniff messages sent to other destinations. Use Network mode on a trusted network; TCP, IPv6 and OSCQuery are not supported.
+
+MIDI and OSC have independent capture switches and history. Switching tabs does not stop either capture; both On/Off indicators remain visible. OSC shows bundle messages on arrival; it does not execute them or schedule their timetags. The inspector preserves original hexadecimal NTP timetags; 0000000000000001 means immediate.
+
+## Make MIDI events easier to read
+Choose controller and note names or decimal numbers. For note names, choose Middle C = C3 or C4. Display filters can hide voice messages, System Common, SysEx, Clock and Active Sensing. Search narrows the visible list. Filters affect the display, not the exported capture.
+
+## Stop and export
+Turn Monitoring off to stop capture; the red OFF overlay marks the stopped history. File → Export Capture saves the active tab’s retained events as JSON, including hidden events. In multiple windows, the frontmost monitor window determines the tab exported. OSC export includes sender/local port details, decoded fields and original datagrams as base64; each message from a bundle repeats its parent datagram. Export before quitting: history is held in memory, capped at 10,000 events per protocol; OSC also has a 16 MiB content budget. OSC queue-drop counts exclude network/kernel loss. Clear removes retained history. Multiple windows share the two protocol captures; the app prevents a second independent instance.
+
+## If nothing appears
+Check Monitoring, the selected ports, display filters and the sending app’s output routing. Click Refresh after connecting hardware. For output observation, read the output status. MIDI kept entirely inside a DAW or plugin may not appear on CoreMIDI ports.
+
+## Website and help
+Click the CLR logo to visit https://www.customliverigs.com. Right-click it to copy the address. If macOS cannot open the URL, the app copies the address and displays a notice. The full offline manual is under Help → CLR MIDI Monitor Help.
+
+## Compatibility and limits
+Native Apple Silicon macOS app; no Intel or Windows build. No MIDI send, echo or thru functionality. MIDI 2.0 semantic decoding and complete SysEx reassembly are not implemented; raw UMP and fragments remain inspectable. Capture has finite capacity; drop counters report overload.
+
+Free for noncommercial use under PolyForm Noncommercial 1.0.0. Commercial use requires separate permission. Current build is ad-hoc signed, not Apple-notarized; macOS may block downloaded copies.
